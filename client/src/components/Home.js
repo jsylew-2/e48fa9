@@ -93,9 +93,16 @@ const Home = ({ user, logout }) => {
   );
 
   const addMessageToConversation = useCallback(
-    (data) => {
+    async (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
-      const { message, sender = null } = data;
+      const message = await data.then((response) => {
+        return response.message;
+      })
+      const sender = await data.then((response) => {
+        if (response.sender != null) return response.sender;
+        else return null;
+      })
+
       if (sender !== null) {
         const newConvo = {
           id: message.conversationId,
