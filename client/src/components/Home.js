@@ -92,7 +92,6 @@ const Home = ({ user, logout }) => {
         }
       });
       setConversations([...conversations]);
-      setActiveConversation((prev) => prev);
     },
     [setConversations, conversations, setActiveConversation],
   );
@@ -126,7 +125,6 @@ const Home = ({ user, logout }) => {
         }
       });
       setConversations([...conversations]);
-      setActiveConversation((prev) => prev);
     },
     [setConversations, conversations, setActiveConversation],
   );
