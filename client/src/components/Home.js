@@ -67,7 +67,7 @@ const Home = ({ user, logout }) => {
       const data = saveMessage(body);
 
       if (!body.conversationId) {
-        addNewConvo(body.recipientId, data.message);
+        addNewConvo(body.recipientId, data);
       } else {
         addMessageToConversation(data);
       }
@@ -79,7 +79,11 @@ const Home = ({ user, logout }) => {
   };
 
   const addNewConvo = useCallback(
-    (recipientId, message) => {
+    async (recipientId, data) => {
+      const message = await data.then((response) => {
+        return response.message;
+      })
+
       conversations.forEach((convo) => {
         if (convo.otherUser.id === recipientId) {
           convo.messages.push(message);
@@ -87,9 +91,10 @@ const Home = ({ user, logout }) => {
           convo.id = message.conversationId;
         }
       });
-      setConversations(conversations);
+      setConversations([...conversations]);
+      setActiveConversation((prev) => prev);
     },
-    [setConversations, conversations],
+    [setConversations, conversations, setActiveConversation],
   );
 
   const addMessageToConversation = useCallback(
@@ -105,7 +110,6 @@ const Home = ({ user, logout }) => {
       })
 
       if (sender !== null) {
-        console.log(2);
         const newConvo = {
           id: message.conversationId,
           otherUser: sender,
