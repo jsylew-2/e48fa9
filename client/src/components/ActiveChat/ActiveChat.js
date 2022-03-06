@@ -49,7 +49,9 @@ const ActiveChat = ({
             {user && (
               <>
                 <Messages
-                  messages={conversation.messages}
+                  messages={conversation.messages.sort((a, b) => {
+                    return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);
+                  })}
                   otherUser={conversation.otherUser}
                   userId={user.id}
                 />

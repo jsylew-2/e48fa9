@@ -94,16 +94,18 @@ const Home = ({ user, logout }) => {
 
   const addMessageToConversation = useCallback(
     async (data) => {
-      // if sender isn't null, that means the message needs to be put in a brand new convo
       const message = await data.then((response) => {
         return response.message;
       })
+
+      // if sender isn't null, that means the message needs to be put in a brand new convo
       const sender = await data.then((response) => {
         if (response.sender != null) return response.sender;
         else return null;
       })
 
       if (sender !== null) {
+        console.log(2);
         const newConvo = {
           id: message.conversationId,
           otherUser: sender,
@@ -119,9 +121,10 @@ const Home = ({ user, logout }) => {
           convo.latestMessageText = message.text;
         }
       });
-      setConversations(conversations);
+      setConversations([...conversations]);
+      setActiveConversation((prev) => prev);
     },
-    [setConversations, conversations],
+    [setConversations, conversations, setActiveConversation],
   );
 
   const setActiveChat = (username) => {
