@@ -62,14 +62,14 @@ const Home = ({ user, logout }) => {
     });
   };
 
-  const postMessage = (body) => {
+  const postMessage = async (body) => {
     try {
-      const data = saveMessage(body);
+      const data = await saveMessage(body);
 
       if (!body.conversationId) {
-        addNewConvo(body.recipientId, data);
+        addNewConvo(body.recipientId, data.message);
       } else {
-        addMessageToConversation(data);
+        addMessageToConversation(body.sender, data.message);
       }
 
       sendMessage(data, body);
@@ -79,35 +79,22 @@ const Home = ({ user, logout }) => {
   };
 
   const addNewConvo = useCallback(
-    async (recipientId, data) => {
-      const message = await data.then((response) => {
-        return response.message;
-      })
-
-      conversations.forEach((convo) => {
+    (recipientId, message) => {
+      conversations.forEach((convo, index) => {
         if (convo.otherUser.id === recipientId) {
           convo.messages.push(message);
           convo.latestMessageText = message.text;
           convo.id = message.conversationId;
+          const updatedConvo = convo;
+          setConversations((prev) => [updatedConvo, ...prev.slice(0, index).concat(prev.slice(index + 1))]);
         }
       });
-      setConversations([...conversations]);
     },
     [setConversations, conversations],
   );
 
   const addMessageToConversation = useCallback(
-    async (data) => {
-      const message = await data.then((response) => {
-        return response.message;
-      })
-
-      // if sender isn't null, that means the message needs to be put in a brand new convo
-      const sender = await data.then((response) => {
-        if (response.sender != null) return response.sender;
-        else return null;
-      })
-
+    (sender, message) => {
       if (sender !== null) {
         const newConvo = {
           id: message.conversationId,
@@ -118,13 +105,15 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       }
 
-      conversations.forEach((convo) => {
+      conversations.forEach((convo, index) => {
         if (convo.id === message.conversationId) {
           convo.messages.push(message);
           convo.latestMessageText = message.text;
+          const updatedConvo = convo;
+          setConversations((prev) => [updatedConvo, ...prev.slice(0, index).concat(prev.slice(index + 1))]);
         }
       });
-      setConversations([...conversations]);
+
     },
     [setConversations, conversations],
   );
@@ -195,6 +184,11 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get("/api/conversations");
+        data.forEach((convo) => {
+          convo.messages.sort((a, b) => {
+            return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1: 0);
+          });
+        })
         setConversations(data);
       } catch (error) {
         console.error(error);
