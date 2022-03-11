@@ -78,6 +78,14 @@ const Home = ({ user, logout }) => {
     }
   };
 
+  const markRead = async (body) => {
+    try {
+      await axios.patch("/api/messages", body);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const addNewConvo = useCallback(
     (recipientId, message) => {
       conversations.forEach((convo) => {
@@ -156,7 +164,6 @@ const Home = ({ user, logout }) => {
     socket.on("add-online-user", addOnlineUser);
     socket.on("remove-offline-user", removeOfflineUser);
     socket.on("new-message", addMessageToConversation);
-
     return () => {
       // before the component is destroyed
       // unbind all event handlers used in this component
@@ -210,6 +217,7 @@ const Home = ({ user, logout }) => {
           clearSearchedUsers={clearSearchedUsers}
           addSearchedUsers={addSearchedUsers}
           setActiveChat={setActiveChat}
+          markRead={markRead}
         />
         <ActiveChat
           activeConversation={activeConversation}

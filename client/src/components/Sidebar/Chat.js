@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@material-ui/core';
 import { BadgeAvatar, ChatContent } from '../Sidebar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,11 +16,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Chat = ({ conversation, setActiveChat, user }) => {
+const Chat = ({ conversation, setActiveChat, user , markRead}) => {
   const classes = useStyles();
   const { otherUser } = conversation;
 
+  const markMessageRead = (conversation, id) => {
+    const readMessagesIds = [];
+    conversation.messages.forEach((message) => {
+      if (message.senderId !== id) {
+        readMessagesIds.push(message.id);
+        message.wasRead = true;
+      }
+    })
+    return readMessagesIds
+  }
+
   const handleClick = async (conversation) => {
+    const readMessagesIds = markMessageRead(conversation, user.id);
+    const reqBody = {
+      messagesIds: readMessagesIds
+    }
+    await markRead(reqBody);
     await setActiveChat(conversation.otherUser.username);
   };
 

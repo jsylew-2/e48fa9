@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Search, Chat, CurrentUser } from './index';
+import {Search, Chat, CurrentUser} from './index';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,6 +24,7 @@ const Sidebar = ({
   conversations = [],
   user,
   setActiveChat,
+    markRead
 }) => {
   const classes = useStyles();
 
@@ -42,6 +43,7 @@ const Sidebar = ({
               conversation={conversation}
               key={conversation.otherUser.username}
               setActiveChat={setActiveChat}
+              markRead={markRead}
               user={user}
             />
           );
