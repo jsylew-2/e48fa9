@@ -18,6 +18,15 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  unreadCount: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: 600,
+    backgroundColor: "#3A8DFF",
+    padding: "2px 8px",
+    borderRadius: "20px",
+    marginTop: 10,
+  }
 }));
 
 const ChatContent = ({ conversation, user }) => {
@@ -36,7 +45,13 @@ const ChatContent = ({ conversation, user }) => {
         <Typography className={classes.previewText}>
           {latestMessageText}
         </Typography>
-        {unreadCount}
+      </Box>
+      <Box>
+        {unreadCount > 0 &&
+        <Typography className={classes.unreadCount}>
+          {unreadCount}
+        </Typography>
+        }
       </Box>
     </Box>
   );
