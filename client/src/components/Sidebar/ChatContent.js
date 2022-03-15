@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@material-ui/core";
+import {Badge, Box, styled, Typography} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -18,16 +18,20 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
-  unreadCount: {
-    color: "white",
+  unreadPreviewText: {
     fontSize: 12,
-    fontWeight: 600,
+    fontWeight: "bold",
+    letterSpacing: -0.17
+  },
+}));
+
+const UnreadBadge = styled(Badge) ({
+  "& .MuiBadge-badge": {
     backgroundColor: "#3A8DFF",
-    padding: "2px 8px",
-    borderRadius: "20px",
+    color: "white",
     marginTop: 10,
   }
-}));
+});
 
 const ChatContent = ({ conversation, user }) => {
   const classes = useStyles();
@@ -42,16 +46,12 @@ const ChatContent = ({ conversation, user }) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography className={unreadCount > 0? classes.unreadPreviewText : classes.previewText}>
           {latestMessageText}
         </Typography>
       </Box>
       <Box>
-        {unreadCount > 0 &&
-        <Typography className={classes.unreadCount}>
-          {unreadCount}
-        </Typography>
-        }
+        <UnreadBadge badgeContent={unreadCount} />
       </Box>
     </Box>
   );

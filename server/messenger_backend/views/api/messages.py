@@ -3,10 +3,12 @@ from django.http import HttpResponse, JsonResponse
 from messenger_backend.models import Conversation, Message
 from online_users import online_users
 from rest_framework.views import APIView
+from django.db import transaction
 
 
 class Messages(APIView):
-    """expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)"""
+    """expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists
+    yet) """
 
     def post(self, request):
         try:
@@ -49,12 +51,13 @@ class Messages(APIView):
         except Exception as e:
             return HttpResponse(status=500)
 
+    @transaction.atomic
     def patch(self, request):
         try:
             user = get_user(request)
 
             if user.is_anonymous:
-                return HttpResponse(status=401)
+                return HttpResponse(status=403)
 
             body = request.data
             message_ids = body.get("messagesIds")
@@ -64,6 +67,6 @@ class Messages(APIView):
                     message = Message.objects.filter(id=message_id).first()
                     message.wasRead = True
                     message.save()
-            return HttpResponse(status=200)
+            return HttpResponse(status=204)
         except Exception as e:
             return HttpResponse(status=500)

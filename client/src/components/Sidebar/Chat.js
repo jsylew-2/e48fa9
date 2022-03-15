@@ -22,11 +22,12 @@ const Chat = ({ conversation, setActiveChat, user , markRead}) => {
 
   const markMessageRead = (conversation, id) => {
     const readMessagesIds = [];
-    conversation.messages.forEach((message) => {
+    conversation.messages.map((message) => {
       if (message.senderId !== id) {
         readMessagesIds.push(message.id);
         message.wasRead = true;
       }
+      return message;
     })
     return readMessagesIds
   }
