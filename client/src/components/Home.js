@@ -69,7 +69,10 @@ const Home = ({ user, logout }) => {
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
       } else {
-        addMessageToConversation(body.sender, data.message);
+        addMessageToConversation({
+          sender: body.sender,
+          message:  data.message
+        });
       }
 
       sendMessage(data, body);
@@ -106,7 +109,8 @@ const Home = ({ user, logout }) => {
   );
 
   const addMessageToConversation = useCallback(
-    (sender, message) => {
+    (data) => {
+      const {message, sender} = data;
       if (sender !== null) {
         const newConvo = {
           id: message.conversationId,
